@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue Basics</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/vue@next" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Monster Slayer</h1>
+    </header>
+    <div id="game">
+      <section id="monster" class="container">
+        <h2>Monster Health</h2>
+        <div class="healthbar">
+          <div class="healthbar__value"
+          :style="monsterBar"></div>
+        </div>
+      </section>
+      <section id="player" class="container">
+        <h2>Your Health</h2>
+        <div class="healthbar">
+          <div class="healthbar__value"
+          :style="playerBar"></div>
+        </div>
+      </section>
+      <section id="controls">
+        <button @click="attackMonster" :disabled="surrendered">ATTACK</button>
+        <button :disabled="nbTurnSpecialAttack !== 3 || surrendered" @click="specialAttack">SPECIAL ATTACK</button>
+        <button @click="healPlayer" :disabled="surrendered">HEAL</button>
+        <button @click="surrender" :disabled="surrendered">SURRENDER</button>
+      </section>
+      <section v-show="surrendered" class="container">
+        <h2> You gave up ! </h2>
+        <button @click="restartGame">Restart game</button>
+      </section>
+      <section v-show="playerLifePoint < 1" class="container">
+        <h2> Game Over ! </h2>
+        <button @click="restartGame">Restart game</button>
+      </section>
+      <section v-show="monsterLifePoint < 1" class="container">
+        <h2> You won, congratulations ! </h2>
+        <button @click="restartGame">Restart game</button>
+      </section>
+      <section id="log" class="container">
+        <h2>Battle Log</h2>
+        <ul>
+          <li v-for="log in logMessages">
+            <p v-if="log.actionBy === 'Player' && log.actionType === 'attacks'"> <span style="color:green">{{ log.actionBy }}</span> {{ log.actionType }} the monster ! The monster lost <span style="color: red;">{{ log.actionValue }} </span> lifepoints. </p>
+            <p v-else-if="log.actionBy === 'Monster' && log.actionType === 'attacks'"> <span style="color:red">{{ log.actionBy }}</span> {{ log.actionType }} the player ! The player lost <span style="color: red;">{{ log.actionValue }} </span> lifepoints. </p>
+            <p v-else-if="log.actionBy === 'Player' && log.actionType === 'heals'"> <span style="color:green">{{ log.actionBy }}</span> {{ log.actionType }} himself ! He regained <span style="color: green;">{{ log.actionValue }} </span> lifepoints. </p>
+            <p v-else> {{ log.actionBy }} uses his special attack ! The monster lost <span style="color: green;">{{ log.actionValue }} </span> lifepoints. </p>
+          </li>
+          <p v-show="surrendered" style="color: red; font-weight: bold;">Player gave up the game.</p>
+        </ul>
+      </section>
+    </div>
+  </body>
+</html>
